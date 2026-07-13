@@ -1,37 +1,40 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Extensions;
 using xTile;
+using xTile.Layers;
+using xTile.Tiles;
 
 namespace EndlessMuseum;
 
 internal sealed class MapNineSlice
 {
     public const string MAP_SECTION = $"Maps/{ModEntry.ModId}_section";
+    public const string MAP_PROPS = $"Maps/{ModEntry.ModId}_props";
     public const int MIN_ROW_TO_BREAK = 6;
 
-    private readonly Rectangle SECTION_TL = new(0, 0, 3, 5);
-    private readonly Rectangle SECTION_TC = new(3, 0, 2, 5);
-    private readonly Rectangle SECTION_TR = new(5, 0, 3, 5);
-    private readonly Rectangle SECTION_ML = new(0, 5, 3, 5);
-    private readonly Rectangle SECTION_MC = new(3, 5, 2, 5);
-    private readonly Rectangle SECTION_MR = new(5, 5, 3, 5);
-    private readonly Rectangle SECTION_BL = new(0, 10, 3, 2);
-    private readonly Rectangle SECTION_BC = new(3, 10, 2, 2);
-    private readonly Rectangle SECTION_BR = new(5, 10, 3, 2);
+    private readonly Rectangle SECTION_TL = new(0, 0, 3, 6);
+    private readonly Rectangle SECTION_TC = new(3, 0, 2, 6);
+    private readonly Rectangle SECTION_TR = new(5, 0, 3, 6);
+    private readonly Rectangle SECTION_ML = new(0, 6, 3, 5);
+    private readonly Rectangle SECTION_MC = new(3, 6, 2, 5);
+    private readonly Rectangle SECTION_MR = new(5, 6, 3, 5);
+    private readonly Rectangle SECTION_BL = new(0, 11, 3, 2);
+    private readonly Rectangle SECTION_BC = new(3, 11, 2, 2);
+    private readonly Rectangle SECTION_BR = new(5, 11, 3, 2);
 
-    private readonly Rectangle SECTION_BREAK_T = new(8, 0, 4, 5);
-    private readonly Rectangle SECTION_BREAK_M = new(8, 5, 4, 5);
-    private readonly Rectangle SECTION_BREAK_B = new(8, 10, 4, 2);
+    private readonly Rectangle SECTION_BREAK_T = new(8, 0, 4, 6);
+    private readonly Rectangle SECTION_BREAK_M = new(8, 6, 4, 5);
+    private readonly Rectangle SECTION_BREAK_B = new(8, 11, 4, 2);
 
-    public int GetMaxColInRow(int displayWidth, int baseX)
+    private readonly Rectangle PROP_DOOR = new(0, 0, 1, 2);
+    private readonly Rectangle PROP_LATCH = new(0, 2, 1, 1);
+    private readonly Rectangle PROP_LADDER = new(1, 0, 1, 3);
+
+    public int GetMaxColInRow(int minWidth)
     {
-        int maxColInRow = (int)
-            MathF.Floor(
-                ((float)(displayWidth / Game1.tileSize - baseX) - SECTION_TL.Width - SECTION_TR.Width)
-                    / SECTION_TC.Width
-            );
+        int maxColInRow = (int)MathF.Floor(((float)minWidth - SECTION_TL.Width - SECTION_TR.Width) / SECTION_TC.Width);
 
         if (maxColInRow < MIN_ROW_TO_BREAK)
             return maxColInRow;
@@ -39,10 +42,14 @@ internal sealed class MapNineSlice
         return maxColInRow;
     }
 
-    public void Patch(IAssetDataForMap data, Point origin, int rows, int cols)
+    public void Patch(IAssetDataForMap data, Point origin, int minWidth, int rows, int cols, out int wallLength)
     {
+        wallLength = 0;
         Map source = Game1.game1.xTileContent.Load<Map>(MAP_SECTION);
-        data.ExtendMap(0, origin.Y + SECTION_TL.Height - 1 + rows * (SECTION_ML.Height - 1) + SECTION_BL.Height);
+        data.ExtendMap(
+            origin.X + minWidth,
+            origin.Y + SECTION_TL.Height - 1 + rows * (SECTION_ML.Height - 1) + SECTION_BL.Height
+        );
         // left col
         PatchSection(data, source, SECTION_TL, origin, 0, 0);
         for (int j = 0; j < rows; j++)
@@ -91,6 +98,7 @@ internal sealed class MapNineSlice
 
         // right col
         int x2 = SECTION_TL.Width + cols * SECTION_MC.Width + xBreak;
+        wallLength = x2 - SECTION_TL.Width;
         PatchSection(data, source, SECTION_TR, origin, x2, 0);
         for (int j = 0; j < rows; j++)
         {
@@ -146,5 +154,68 @@ internal sealed class MapNineSlice
             new(origin.X + x, origin.Y + y, section.Width, section.Height),
             PatchMapMode.Overlay
         );
+    }
+
+    internal void PatchDecor(IAssetDataForMap data, Point origin, Point doorPos, int wallLength)
+    {
+        // add doors and ladders
+        Map props = Game1.game1.xTileContent.Load<Map>(MAP_PROPS);
+        Point ladderPos = new(origin.X + 2, origin.Y + 3);
+        Layer bldLayer = data.Data.RequireLayer("Buildings");
+        if (bldLayer.Tiles[doorPos.X, doorPos.Y] == null)
+        {
+            data.PatchMap(
+                props,
+                PROP_LATCH,
+                new(doorPos.X, doorPos.Y - PROP_LATCH.Height + 1, PROP_LATCH.Width, PROP_LATCH.Height),
+                PatchMapMode.Overlay
+            );
+        }
+        else
+        {
+            data.PatchMap(
+                props,
+                PROP_DOOR,
+                new(doorPos.X, doorPos.Y - PROP_DOOR.Height + 1, PROP_DOOR.Width, PROP_DOOR.Height),
+                PatchMapMode.Overlay
+            );
+        }
+        data.PatchMap(
+            props,
+            PROP_LADDER,
+            new(ladderPos.X, ladderPos.Y - PROP_LADDER.Height + 1, PROP_LADDER.Width, PROP_LADDER.Height),
+            PatchMapMode.Overlay
+        );
+        // set warps
+        TileSheet? untitledTilesheet = data.Data.RequireTileSheet("untitled tile sheet");
+        (
+            bldLayer.Tiles[doorPos.X, doorPos.Y] ??= new StaticTile(bldLayer, untitledTilesheet, BlendMode.Alpha, 48)
+        ).Properties["Action"] = $"Warp {ladderPos.X} {ladderPos.Y + 1} ArchaeologyHouse";
+        (
+            bldLayer.Tiles[ladderPos.X, ladderPos.Y] ??= new StaticTile(
+                bldLayer,
+                untitledTilesheet,
+                BlendMode.Alpha,
+                48
+            )
+        ).Properties["Action"] = $"Warp {doorPos.X} {doorPos.Y + 1} ArchaeologyHouse";
+        // add random decor
+        int x = origin.X + SECTION_TL.Width;
+        int y = origin.Y + 1;
+        int wallEnd = x + wallLength - 2;
+        int propCount = props.DisplayWidth / (2 * Game1.tileSize) - 1;
+        while (x <= wallEnd)
+        {
+            if (Random.Shared.Next(3) == 0)
+            {
+                Rectangle decorSource = new(2 + 2 * Random.Shared.Next(propCount), 0, 2, 4);
+                data.PatchMap(props, decorSource, new(x, y, 2, 4), PatchMapMode.Overlay);
+                x += 2;
+            }
+            else
+            {
+                ++x;
+            }
+        }
     }
 }

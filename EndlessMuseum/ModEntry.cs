@@ -54,6 +54,10 @@ public sealed class ModEntry : Mod
                 AssetLoadPriority.Low
             );
         }
+        if (e.NameWithoutLocale.IsEquivalentTo(MapNineSlice.MAP_PROPS))
+        {
+            e.LoadFromModFile<Map>("assets/props.tmx", AssetLoadPriority.Low);
+        }
         else if (e.NameWithoutLocale.IsEquivalentTo(MAP_ARCHAEOLOGY_HOUSE))
         {
             e.Edit(Edit_ArchaeologyHouse, AssetEditPriority.Late);
@@ -136,8 +140,9 @@ public sealed class ModEntry : Mod
         }
 
         // need to do the patches
+        int allowedWidth = Math.Max((target.DisplayWidth / Game1.tileSize) - config.BaseOrigin.X, config.MinRoomWidth);
         int requiredSlots = LibraryMuseum.totalArtifacts - slots.Count;
-        int maxColInRow = nineSlice.GetMaxColInRow(target.DisplayWidth, config.BaseOrigin.X);
+        int maxColInRow = nineSlice.GetMaxColInRow(allowedWidth);
         int maxSlotsInRow = maxColInRow * 4 + 4;
         int requiredRows = (int)MathF.Ceiling((float)requiredSlots / maxSlotsInRow);
         int requiredCols = (int)MathF.Ceiling(MathF.Ceiling((float)requiredSlots / requiredRows - 4) / 4f);
@@ -148,20 +153,9 @@ public sealed class ModEntry : Mod
         );
 
         Point origin = new(config.BaseOrigin.X, config.BaseOrigin.Y + target.DisplayHeight / Game1.tileSize);
-        nineSlice.Patch(data, origin, requiredRows, requiredCols);
+        nineSlice.Patch(data, origin, config.MinRoomWidth, requiredRows, requiredCols, out int wallLength);
 
-        // add door
-        Layer? bld2Layer = target.GetLayer("Buildings2");
-        if (bld2Layer == null)
-        {
-            bld2Layer = new Layer("Buildings2", bldLayer.Map, bldLayer.LayerSize, bldLayer.TileSize);
-            bldLayer.Map.AddLayer(bld2Layer);
-        }
-        // to door
-        bld2Layer.Tiles[39, 15] = new StaticTile(bld2Layer, untitledTilesheet, BlendMode.Alpha, 1389);
-        bld2Layer.Tiles[39, 16] = new StaticTile(bld2Layer, untitledTilesheet, BlendMode.Alpha, 1421);
-        bldLayer.Tiles[39, 16] ??= new StaticTile(bldLayer, untitledTilesheet, BlendMode.Alpha, 106);
-        bldLayer.Tiles[39, 16].Properties["Action"] = $"Warp {origin.X + 1} {origin.Y + 4} ArchaeologyHouse";
+        nineSlice.PatchDecor(data, origin, config.DoorPosition, wallLength);
 
         if (Context.IsMainPlayer)
             help.Events.GameLoop.UpdateTicked += OnUpdateTicked_RepositionDonatedArtifactsIfNeeded;
