@@ -71,25 +71,25 @@ public sealed class ModEntry : Mod
         {
             e.LoadFromModFile<Texture2D>("assets/tiles_glass.png", AssetLoadPriority.Low);
         }
-#if DEBUG
-        else if (e.NameWithoutLocale.IsEquivalentTo("Data/Objects"))
-        {
-            e.Edit(
-                (asset) =>
-                {
-                    IDictionary<string, ObjectData> dat = asset.AsDictionary<string, ObjectData>().Data;
-                    ObjectData trilobite = dat["589"];
-                    for (int i = 0; i < 100; i++)
-                    {
-                        ObjectData cloned = trilobite.ShallowClone();
-                        cloned.Name = $"{ModId}_trilobite_{i}";
-                        dat[cloned.Name] = cloned;
-                    }
-                },
-                AssetEditPriority.Late
-            );
-        }
-#endif
+        // #if DEBUG
+        //         else if (e.NameWithoutLocale.IsEquivalentTo("Data/Objects"))
+        //         {
+        //             e.Edit(
+        //                 (asset) =>
+        //                 {
+        //                     IDictionary<string, ObjectData> dat = asset.AsDictionary<string, ObjectData>().Data;
+        //                     ObjectData trilobite = dat["589"];
+        //                     for (int i = 0; i < 100; i++)
+        //                     {
+        //                         ObjectData cloned = trilobite.ShallowClone();
+        //                         cloned.Name = $"{ModId}_trilobite_{i}";
+        //                         dat[cloned.Name] = cloned;
+        //                     }
+        //                 },
+        //                 AssetEditPriority.Late
+        //             );
+        //         }
+        // #endif
     }
 
     private void OnAssetsInvalidated(object? sender, AssetsInvalidatedEventArgs e)
@@ -135,18 +135,18 @@ public sealed class ModEntry : Mod
             return;
         }
         HashSet<Vector2> slots = FindMuseumSlots(bldLayer, untitledTilesheet);
-        if (slots.Count >= LibraryMuseum.totalArtifacts)
+        int requiredSlots = Math.Max(LibraryMuseum.totalArtifacts - slots.Count, config.MinSlotCount);
+        if (requiredSlots <= 0)
         {
             Log(
                 $"'{MAP_ARCHAEOLOGY_HOUSE}' has {slots.Count} existing donateable slots for {LibraryMuseum.totalArtifacts} total artifacts, enough to donate everything.",
-                LogLevel.Info
+                LogLevel.Debug
             );
             return;
         }
 
         // need to do the patches
         int allowedWidth = Math.Max((target.DisplayWidth / Game1.tileSize) - config.BaseOrigin.X, config.MinRoomWidth);
-        int requiredSlots = LibraryMuseum.totalArtifacts - slots.Count;
         int maxColInRow = nineSlice.GetMaxColInRow(allowedWidth);
         int maxSlotsInRow = maxColInRow * 4 + 4;
         int requiredRows = (int)MathF.Ceiling((float)requiredSlots / maxSlotsInRow);
@@ -154,7 +154,7 @@ public sealed class ModEntry : Mod
 
         Log(
             $"'{MAP_ARCHAEOLOGY_HOUSE}' has {slots.Count} existing donateable slots for {LibraryMuseum.totalArtifacts} total artifacts and needs {requiredSlots} more, will add {requiredRows * (requiredCols * 4 + 4)} ({requiredRows}x{requiredCols}).",
-            LogLevel.Info
+            LogLevel.Debug
         );
 
         Point origin = new(config.BaseOrigin.X, config.BaseOrigin.Y + target.DisplayHeight / Game1.tileSize);

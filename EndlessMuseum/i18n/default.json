@@ -10,5 +10,7 @@
   "config.DoorPosition.name": "Door Position",
   "config.DoorPosition.desc": "Where to put door that goes to the new room",
   "config.MinRoomWidth.name": "Min Room Width",
-  "config.MinRoomWidth.desc": "Minimum width of the room, used if this is greater than the map's width"
+  "config.MinRoomWidth.desc": "Minimum width of the room, used if this is greater than the map's width",
+  "config.MinSlotCount.name": "Min Slot Count",
+  "config.MinSlotCount.desc": "Ensure that the display room has at least this many slots."
 }

@@ -214,7 +214,7 @@ internal sealed class MapNineSlice
         int propCount = props.DisplayWidth / (2 * Game1.tileSize) - 1;
         while (x <= wallEnd)
         {
-            if (Random.Shared.Next(3) == 0)
+            if (Random.Shared.NextBool())
             {
                 Rectangle decorSource = new(2 + 2 * Random.Shared.Next(propCount), 0, 2, 4);
                 data.PatchMap(props, decorSource, new(x, y, 2, 4), PatchMapMode.Overlay);

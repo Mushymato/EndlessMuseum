@@ -7,8 +7,9 @@ namespace EndlessMuseum;
 public sealed class ModConfig
 {
     public Point BaseOrigin { get; set; } = new(25, 0);
-    public Point DoorPosition { get; set; } = new(39, 16);
+    public Point DoorPosition { get; set; } = new(41, 13);
     public int MinRoomWidth { get; set; } = 0;
+    public int MinSlotCount { get; set; } = 0;
     public bool? EnableGlass { get; set; } = null;
     internal bool EnableGlassValue
     {
@@ -51,7 +52,7 @@ public sealed class ModConfig
         );
         GMCM.AddTextOption(
             mod,
-            () => EnableGlass?.ToString() ?? "null",
+            () => EnableGlass.HasValue ? EnableGlass.Value.ToString() : "null",
             (value) =>
             {
                 switch (value)
@@ -117,7 +118,18 @@ public sealed class ModConfig
             I18n.Config_MinRoomWidth_Name,
             I18n.Config_MinRoomWidth_Desc,
             0,
-            200
+            200,
+            interval: 4
+        );
+        GMCM.AddNumberOption(
+            mod,
+            () => MinSlotCount,
+            (value) => MinSlotCount = value,
+            I18n.Config_MinSlotCount_Name,
+            I18n.Config_MinSlotCount_Desc,
+            0,
+            200,
+            interval: 4
         );
     }
 }
