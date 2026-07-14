@@ -96,13 +96,8 @@ public sealed class ModEntry : Mod
     {
         if (e.NamesWithoutLocale.Any(name => name.IsEquivalentTo(MapNineSlice.MAP_SECTION)))
         {
-            help.Events.GameLoop.UpdateTicked += OnUpdateTicked_InvalidateMapsArchaeologyHouse;
+            help.GameContent.InvalidateCache(MAP_ARCHAEOLOGY_HOUSE);
         }
-    }
-
-    private void OnUpdateTicked_InvalidateMapsArchaeologyHouse(object? sender, UpdateTickedEventArgs e)
-    {
-        help.GameContent.InvalidateCache(MAP_ARCHAEOLOGY_HOUSE);
     }
 
     private static void OnUpdateTicked_RepositionDonatedArtifactsIfNeeded(object? sender, UpdateTickedEventArgs e)
