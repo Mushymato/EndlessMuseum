@@ -45,12 +45,14 @@ jobs:
                       [CHANGELOG.md](CHANGELOG.md) and [attestation](${{steps.create-artifacts.outputs.attestation-url}}).
 
             - name: Upload to Nexus Mods
-              uses: Nexus-Mods/upload-action@v1.0.0-beta.3
-              if: false && github.ref_type == 'tag' && !contains(github.ref_name, '-')
+              uses: Nexus-Mods/upload-action@v1.0.0-beta.9
+              if: github.ref_type == 'tag' && !contains(github.ref_name, '-')
               with:
                 api_key: ${{secrets.NEXUS_MODS_API_KEY}}
-                file_group_id: ${{secrets.NEXUSMODS_FILE_GROUP_ID}}
+                file_id: ${{secrets.NEXUSMODS_FILE_GROUP_ID}}
                 filename: _releases/${{env.REPO_NAME}} ${{github.ref_name}}.zip
                 version: ${{github.ref_name}}
-                display_name: ${{env.REPO_NAME}}
+                display_name: ${{env.REPO_NAME}}-${{github.ref_name}}
                 description: "For SDV 1.6.15+, see changelogs."
+                show_requirements_pop_up: true
+                update_mod_version: true

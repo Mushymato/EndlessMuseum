@@ -29,3 +29,5 @@ Aside from the display room, this mod also makes sure your donated artifacts are
 - English
 
 - 简体中文
+
+- Русский (by [ellatuk](https://github.com/ellatuk))
