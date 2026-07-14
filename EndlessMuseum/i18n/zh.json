@@ -1,0 +1,16 @@
+{
+  "$schema": "https://smapi.io/schemas/i18n.json",
+  "config.EnableGlass.name": "玻璃罩",
+  "config.EnableGlass.value.null": "自动",
+  "config.EnableGlass.value.true": "启用",
+  "config.EnableGlass.value.false": "禁用",
+  "config.EnableGlass.desc": "给新展柜添加玻璃罩，类似SVE",
+  "config.BaseOrigin.name": "展厅位置",
+  "config.BaseOrigin.desc": "新展厅的位置，这个点从地图底边开始算",
+  "config.DoorPosition.name": "门位置",
+  "config.DoorPosition.desc": "进入展厅的门的位置",
+  "config.MinRoomWidth.name": "最低展厅宽度",
+  "config.MinRoomWidth.desc": "展厅最低宽度，未设置时按地图宽计算",
+  "config.MinSlotCount.name": "最低展厅展柜数",
+  "config.MinSlotCount.desc": "展厅里至少有这么多展柜"
+}

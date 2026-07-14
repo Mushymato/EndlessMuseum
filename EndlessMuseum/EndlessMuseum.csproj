@@ -13,16 +13,17 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Name>EndlessMuseum</Name>
+    <Name>Endless Museum</Name>
     <Authors>mushymato</Authors>
-    <Description>Your museum always has enough slots for donations, somewhere the backroom.</Description>
+    <Description>Your museum always has enough slots for donations, somewhere in the backrooms.</Description>
     <UniqueId>mushymato.EndlessMuseum</UniqueId>
-    <UpdateKeys>Nexus:???,GitHub:Mushymato/EndlessMuseum</UpdateKeys>
-    <Version>0.1.0</Version>
+    <UpdateKeys>Nexus:44375,GitHub:Mushymato/EndlessMuseum</UpdateKeys>
+    <Version>1.0.0</Version>
     <BaseManifest>new</BaseManifest>
     <MinimumApiVersion_Behavior>Update</MinimumApiVersion_Behavior>
     <MinimumGameVersion_Behavior>UpdateFull</MinimumGameVersion_Behavior>
     <Dependencies_VersionBehavior>Ignore</Dependencies_VersionBehavior>
+    <IgnoreModFilePatterns>assets[/\\]mushymato.EndlessMuseum[/\\].*</IgnoreModFilePatterns>
   </PropertyGroup>
 
   <ItemGroup>

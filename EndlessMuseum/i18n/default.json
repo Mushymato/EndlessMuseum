@@ -1,3 +1,16 @@
 {
   "$schema": "https://smapi.io/schemas/i18n.json",
+  "config.EnableGlass.name": "Enable Glass",
+  "config.EnableGlass.value.null": "Auto",
+  "config.EnableGlass.value.true": "True",
+  "config.EnableGlass.value.false": "False",
+  "config.EnableGlass.desc": "Add glass case to the new displays similar to SVE.",
+  "config.BaseOrigin.name": "Room Position",
+  "config.BaseOrigin.desc": "Top left position of the new museum room, calculated from the bottom edge of the map",
+  "config.DoorPosition.name": "Door Position",
+  "config.DoorPosition.desc": "Where to put door that goes to the new room",
+  "config.MinRoomWidth.name": "Min Room Width",
+  "config.MinRoomWidth.desc": "Minimum width of the room, used if this is greater than the map's width",
+  "config.MinSlotCount.name": "Min Slot Count",
+  "config.MinSlotCount.desc": "Ensure that the display room has at least this many slots."
 }
