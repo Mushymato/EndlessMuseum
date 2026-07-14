@@ -1,3 +1,16 @@
 {
   "$schema": "https://smapi.io/schemas/i18n.json",
+  "config.EnableGlass.name": "Включить стекло",
+  "config.EnableGlass.value.null": "Авто",
+  "config.EnableGlass.value.true": "Верно",
+  "config.EnableGlass.value.false": "Неверно",
+  "config.EnableGlass.desc": "Добавить стеклянный кейс в новые дисплеи, похожие как в SVE.",
+  "config.BaseOrigin.name": "Положение в комнате",
+  "config.BaseOrigin.desc": "Верхнее левое положение новой комнаты музея, рассчитанное по нижнему краю карты.",
+  "config.DoorPosition.name": "Положение двери",
+  "config.DoorPosition.desc": "Где поставить дверь, которая ведёт в новую комнату.",
+  "config.MinRoomWidth.name": "Минимальная ширина комнаты",
+  "config.MinRoomWidth.desc": "Минимальная ширина комнаты, используемая, если она больше ширины карты.",
+  "config.MinSlotCount.name": "Минимальное количество слотов",
+  "config.MinSlotCount.desc": "Убедитесь, что в выставочном зале есть как минимум столько слотов."
 }
