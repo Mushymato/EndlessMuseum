@@ -1,0 +1,16 @@
+{
+  "$schema": "https://smapi.io/schemas/i18n.json",
+  "config.EnableGlass.name": "Стеклянные витрины",
+  "config.EnableGlass.value.null": "Авто",
+  "config.EnableGlass.value.true": "Включено",
+  "config.EnableGlass.value.false": "Отключено",
+  "config.EnableGlass.desc": "Добавить стеклянные витрины к новым экспозициям, как в SVE.",
+  "config.BaseOrigin.name": "Расположение комнаты",
+  "config.BaseOrigin.desc": "Верхний левый угол новой комнаты музея. Рассчитывается от нижнего края карты.",
+  "config.DoorPosition.name": "Расположение двери",
+  "config.DoorPosition.desc": "Место, где будет расположена дверь в новую комнату.",
+  "config.MinRoomWidth.name": "Минимальная ширина комнаты",
+  "config.MinRoomWidth.desc": "Минимальная ширина комнаты, используемая, если она больше ширины карты.",
+  "config.MinSlotCount.name": "Минимальное количество витрин",
+  "config.MinSlotCount.desc": "В выставочном зале должно быть как минимум столько витрин."
+}
